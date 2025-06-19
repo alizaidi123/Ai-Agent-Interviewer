@@ -232,7 +232,10 @@ with tabs[0]:
                         st.session_state.interview_started = True
                         st.session_state.conversation_history.append({"role": "system", "content": "Interview started."})
                         st.session_state.conversation_history.append({"role": "system", "content": "Initial interview plan generated based on JD and Resume."})
-                        st.success("✨ Interview plan prepared successfully! Now, please navigate to the '🗣️ Conduct Interview' tab to begin the simulation.") # Added intimation
+
+                        # Emphasized and clearer instruction
+                        st.success("✨ Interview plan prepared successfully! Now, please click on the **'🗣️ Conduct Interview'** tab above to begin the simulation.")
+
                         st.write("---")
                         st.subheader("📝 Initial Interview Questions:")
                         for i, q_data in enumerate(interview_plan["interview_questions"]):
@@ -240,7 +243,6 @@ with tabs[0]:
                             with st.expander("Expected Answer Insight"):
                                 st.write(q_data['expected_answer_insight'])
                         st.write("---")
-                        st.info("Ready to start the interview simulation. Click on the '🗣️ Conduct Interview' tab.")
                         st.rerun()
 
 with tabs[1]:
