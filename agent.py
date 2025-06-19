@@ -2,7 +2,6 @@ import streamlit as st
 import openai
 import json
 import os
-import io
 from pypdf import PdfReader
 from docx import Document
 from dotenv import load_dotenv
