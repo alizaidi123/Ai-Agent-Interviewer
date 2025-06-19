@@ -1,3 +1,5 @@
 streamlit
 openai
+pypdf
+python-docx
 python-dotenv
