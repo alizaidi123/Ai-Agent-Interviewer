@@ -2,12 +2,13 @@ import streamlit as st
 import openai
 import json
 import os
+import io
 from pypdf import PdfReader
-from docx import Document 
+from docx import Document
 from dotenv import load_dotenv
 
-
 load_dotenv()
+
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:
@@ -15,7 +16,6 @@ if not openai_api_key:
     st.stop()
 
 openai.api_key = openai_api_key
-
 
 def extract_text_from_pdf(pdf_file):
     reader = PdfReader(pdf_file)
@@ -39,7 +39,6 @@ def process_uploaded_file(uploaded_file):
     else:
         st.warning("Unsupported file type. Please upload a PDF, DOCX, or TXT file.")
         return None
-
 
 def analyze_documents_and_prepare_for_interview(jd_text, resume_text):
     st.info("Analyzing Job Description and Resume...")
@@ -151,7 +150,6 @@ def analyze_interview_transcript(full_transcript, initial_plan):
         st.error(f"An unexpected error occurred during final analysis: {e}")
         return None
 
-
 st.set_page_config(page_title="AI Interview Agent", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown(
@@ -195,7 +193,6 @@ autonomously. Upload a Job Description and a Candidate's Resume to get started.
 """, unsafe_allow_html=True)
 
 
-
 if "interview_started" not in st.session_state:
     st.session_state.interview_started = False
 if "interview_plan" not in st.session_state:
@@ -211,10 +208,9 @@ if "interview_completed" not in st.session_state:
 if "analysis_results" not in st.session_state:
     st.session_state.analysis_results = None
 
-
 tabs = st.tabs(["🚀 Setup Interview", "🗣️ Conduct Interview", "📊 View Analysis"])
 
-with tabs[0]: 
+with tabs[0]:
     st.header("1. Upload Documents & Plan Interview")
     col1, col2 = st.columns(2)
     with col1:
@@ -236,7 +232,7 @@ with tabs[0]:
                         st.session_state.interview_started = True
                         st.session_state.conversation_history.append({"role": "system", "content": "Interview started."})
                         st.session_state.conversation_history.append({"role": "system", "content": "Initial interview plan generated based on JD and Resume."})
-                        st.success("✨ Interview plan prepared successfully! Move to 'Conduct Interview' tab.")
+                        st.success("✨ Interview plan prepared successfully! Now, please navigate to the '🗣️ Conduct Interview' tab to begin the simulation.") # Added intimation
                         st.write("---")
                         st.subheader("📝 Initial Interview Questions:")
                         for i, q_data in enumerate(interview_plan["interview_questions"]):
@@ -244,16 +240,16 @@ with tabs[0]:
                             with st.expander("Expected Answer Insight"):
                                 st.write(q_data['expected_answer_insight'])
                         st.write("---")
-                        st.info("Ready to start the interview simulation. Click on the 'Conduct Interview' tab.")
-                        st.rerun() 
+                        st.info("Ready to start the interview simulation. Click on the '🗣️ Conduct Interview' tab.")
+                        st.rerun()
 
-with tabs[1]: 
+with tabs[1]:
     st.header("2. Conduct Interview (Simulated)")
 
     if not st.session_state.interview_started:
-        st.warning("Please upload documents and prepare the interview plan in the 'Setup Interview' tab first.")
+        st.warning("Please upload documents and prepare the interview plan in the '🚀 Setup Interview' tab first.")
     elif st.session_state.interview_completed:
-        st.info("The interview has concluded. Please view the analysis in the 'View Analysis' tab.")
+        st.info("The interview has concluded. Please view the analysis in the '📊 View Analysis' tab.")
     elif st.session_state.interview_plan:
         questions = st.session_state.interview_plan["interview_questions"]
         current_idx = st.session_state.current_question_idx
@@ -291,20 +287,20 @@ with tabs[1]:
                                 st.rerun()
                             elif action["action"] == "conclude_interview":
                                 st.session_state.interview_completed = True
-                                st.success("🎉 Interview concluded by AI. Proceed to 'View Analysis' tab for results!")
+                                st.success("🎉 Interview concluded by AI. Please navigate to the '📊 View Analysis' tab for results!")
                                 st.rerun()
                 else:
                     st.warning("Please enter a candidate response to continue the interview.")
         else:
             st.session_state.interview_completed = True
-            st.info("All main questions asked. Interview ending. Please view the analysis in the 'View Analysis' tab.")
+            st.info("All main questions asked. Interview ending. Please view the analysis in the '📊 View Analysis' tab.")
             st.rerun()
 
-with tabs[2]: 
+with tabs[2]:
     st.header("3. Interview Analysis & Report")
 
     if not st.session_state.interview_completed:
-        st.info("Please complete the interview in the 'Conduct Interview' tab to view the analysis.")
+        st.info("Please complete the interview in the '🗣️ Conduct Interview' tab to view the analysis.")
     elif not st.session_state.analysis_results:
         st.warning("Analysis not yet generated. Click the button below to start.")
         if st.button("Generate Interview Analysis Report"):
