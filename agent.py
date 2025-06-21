@@ -254,6 +254,8 @@ if "current_ai_question" not in st.session_state:  # To persist AI's question ac
     st.session_state.current_ai_question = ""
 if "main_questions_asked_count" not in st.session_state:  # To track how many main questions have been asked
     st.session_state.main_questions_asked_count = 0
+if "show_plan_ready_message" not in st.session_state:
+    st.session_state.show_plan_ready_message = False
 
 
 # --- Login Page Function ---
@@ -366,7 +368,12 @@ else:
                 st.session_state.analysis_results = None
                 st.session_state.current_ai_question = ""
                 st.session_state.main_questions_asked_count = 0
+                st.session_state.show_plan_ready_message = False
                 st.rerun()
+        if st.session_state.show_plan_ready_message and st.session_state.interview_started and not st.session_state.interview_completed:
+            st.success(
+                "✨ Your practice interview plan is ready! Please click on the **'🗣️ Practice Interview'** tab above to begin the simulation.")
+            st.write("---")  # Add a separator for better UI if needed
 
         if jd_file and resume_file and not st.session_state.interview_started:
             jd_text = process_uploaded_file(jd_file)
@@ -412,9 +419,7 @@ else:
                                     st.error(
                                         "No practice interview questions were generated. Please refine input or model response.")
 
-                                st.success(
-                                    "✨ Your practice interview plan is ready! Please click on the **'🗣️ Practice Interview'** tab above to begin the simulation.")
-
+                                st.session_state.show_plan_ready_message = True
                                 st.write("---")
                                 st.subheader("📝 Your Initial Practice Questions:")
                                 for i, q_data in enumerate(interview_plan["interview_questions"]):
@@ -430,6 +435,8 @@ else:
 
     with tabs[1]:  # Conduct Interview Tab
         st.header("2. Practice Your Interview")
+        if st.session_state.interview_started and st.session_state.interview_plan and st.session_state.show_plan_ready_message:
+            st.session_state.show_plan_ready_message = False
 
         if not st.session_state.interview_started:
             st.warning(
