@@ -63,20 +63,17 @@ def analyze_documents_and_prepare_for_interview(jd_text, resume_text):
     st.info("Analyzing Job Description and Resume to prepare your personalized interview plan...")
     try:
         messages = [
-            {"role": "system", "content": """You are an expert HR Interview AI. Your purpose is to help a candidate
-             prepare rigorously for an interview.
-             Your task is to analyze a Job Description and a Candidate's Resume.
-             Based on this analysis, you will:
-             1. Identify key skills, experiences, and qualifications required by the JD.
-             2. Identify the candidate's relevant skills, experiences, and qualifications from their resume.
-             3. Pinpoint any gaps or areas where the candidate's resume seems strong or weak relative to the JD.
-             4. Generate an initial set of 5-7 core interview questions designed to assess the candidate's fit,
-                probe into their experiences, and clarify any ambiguities. These should be good starting points for a rigorous interview.
-             5. For each question, suggest what a good answer might entail or what you're looking for, connecting it to the JD.
-             Provide the output in a structured JSON format with keys: "jd_analysis", "resume_analysis",
-             "gaps_and_strengths", "interview_questions". The "interview_questions" should be a list of dictionaries,
-             each with "question" and "expected_answer_insight" keys."""},
-            {"role": "user", "content": f"Job Description:\n{jd_text}\n\nCandidate Resume:\n{resume_text}"}
+            {"role": "system", "content": f"""You are an AI Interview Analyst, providing feedback to a candidate who just completed a rigorous practice interview.
+             You have the full transcript of the interview and the initial interview plan (which includes JD/Resume analysis and identified "relevant_expert_terms").
+             Your task is to:
+             1. Evaluate the candidate's overall performance against the job description requirements and considering the rigor of the interview questions asked.
+             2. Identify the candidate's strong suits based on their answers and how well they handled challenging questions. **Specifically, note instances where the candidate effectively used the identified "relevant_expert_terms" (from the initial plan) to demonstrate expertise.**
+             3. Identify the candidate's weak suits or areas for improvement, specifically noting if they struggled with probing questions, provided vague answers, or showed inconsistencies. **Also, highlight opportunities where the candidate *could have used* relevant "expert terms" but did not, or used them incorrectly, impacting their perceived expertise.**
+             4. Provide a clear recommendation on whether the candidate is well-prepared for the position (e.g., "Highly Prepared", "Well Prepared", "Needs More Practice", "Significant Improvement Needed").
+             5. Give a concise, professional summary of the interview and key takeaways for the candidate's preparation.
+             Initial interview plan details for context: {json.dumps(initial_plan, indent=2)}
+             Provide the output in a structured JSON format with keys: "overall_qualification",
+             "strong_suits", "weak_suits", "recommendation", "interview_summary"."""},
         ]
 
         response = openai.chat.completions.create(
@@ -160,17 +157,16 @@ def analyze_interview_transcript(full_transcript, initial_plan):
     try:
         messages = [
             {"role": "system", "content": f"""You are an AI Interview Analyst, providing feedback to a candidate who just completed a rigorous practice interview.
-             You have the full transcript of the interview and the initial interview plan (which includes JD/Resume analysis).
+             You have the full transcript of the interview and the initial interview plan (which includes JD/Resume analysis and identified "relevant_expert_terms").
              Your task is to:
              1. Evaluate the candidate's overall performance against the job description requirements and considering the rigor of the interview questions asked.
-             2. Identify the candidate's strong suits based on their answers and how well they handled challenging questions.
-             3. Identify the candidate's weak suits or areas for improvement, specifically noting if they struggled with probing questions, provided vague answers, or showed inconsistencies.
+             2. Identify the candidate's strong suits based on their answers and how well they handled challenging questions. **Specifically, note instances where the candidate effectively used the identified "relevant_expert_terms" (from the initial plan) to demonstrate expertise.**
+             3. Identify the candidate's weak suits or areas for improvement, specifically noting if they struggled with probing questions, provided vague answers, or showed inconsistencies. **Also, highlight opportunities where the candidate *could have used* relevant "expert terms" but did not, or used them incorrectly, impacting their perceived expertise.**
              4. Provide a clear recommendation on whether the candidate is well-prepared for the position (e.g., "Highly Prepared", "Well Prepared", "Needs More Practice", "Significant Improvement Needed").
              5. Give a concise, professional summary of the interview and key takeaways for the candidate's preparation.
              Initial interview plan details for context: {json.dumps(initial_plan, indent=2)}
              Provide the output in a structured JSON format with keys: "overall_qualification",
              "strong_suits", "weak_suits", "recommendation", "interview_summary"."""},
-            {"role": "user", "content": f"Full Interview Transcript:\n{full_transcript}"}
         ]
 
         response = openai.chat.completions.create(
