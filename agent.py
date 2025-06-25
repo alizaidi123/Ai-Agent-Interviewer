@@ -292,11 +292,6 @@ def show_login_page():
                 st.error("Invalid username or password.")
 
     st.markdown("---")
-    st.markdown("""
-    **Note on Signup/Credit Persistence:** This demo uses hardcoded users and session-based credits.
-    For a real-world application with persistent user accounts and credit management (including signup),
-    a secure backend database and user authentication system would be required.
-    """)
 
 
 # --- Main Application Logic ---
